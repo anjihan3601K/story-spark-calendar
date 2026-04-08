@@ -31,8 +31,8 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
+      { title: "Smart Story Calendar — Capture Your Moments" },
+      { name: "description", content: "A beautiful interactive calendar to capture moments, plan ahead, and tell your story one day at a time." },
       { name: "author", content: "Lovable" },
       { property: "og:title", content: "Lovable App" },
       { property: "og:description", content: "Lovable Generated Project" },
