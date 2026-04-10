@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Sparkles } from "lucide-react";
+import { Plus, Sparkles, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { NoteCard } from "@/components/NoteCard";
 import { NOTE_COLORS, EMOJIS, formatDate, toISODateString, getRangeDays } from "@/lib/calendar-types";
@@ -45,58 +45,82 @@ export function NotesPanel({ notes, selection, onAddNote, onDeleteNote, onClearS
 
   return (
     <div className="flex flex-col gap-4">
+      {/* Header */}
       <div className="flex items-center justify-between">
-        <h3 className="text-base font-bold tracking-tight text-foreground uppercase">Notes</h3>
+        <div className="flex items-center gap-2">
+          <motion.div
+            whileHover={{ rotate: 15 }}
+            transition={{ type: "spring", stiffness: 300 }}
+          >
+            <BookOpen className="h-4 w-4 text-primary" />
+          </motion.div>
+          <h3 className="text-base font-bold uppercase tracking-tight text-foreground">Memories</h3>
+        </div>
         <motion.span
           className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-bold text-primary"
           key={notes.length}
-          initial={{ scale: 1.3 }}
-          animate={{ scale: 1 }}
-          transition={{ type: "spring", stiffness: 400, damping: 15 }}
+          initial={{ scale: 1.4, rotate: -10 }}
+          animate={{ scale: 1, rotate: 0 }}
+          transition={{ type: "spring", stiffness: 400, damping: 12 }}
         >
           {notes.length}
         </motion.span>
       </div>
 
-      {/* Ruled lines aesthetic */}
+      {/* Empty state — ruled lines */}
       {!hasSelection && !isAdding && sortedNotes.length === 0 && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="space-y-0"
-        >
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-0">
           {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="border-b border-muted-foreground/15 py-3" />
+            <motion.div
+              key={i}
+              className="border-b border-muted-foreground/10 py-3"
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: 1 }}
+              transition={{ delay: i * 0.04, duration: 0.3 }}
+              style={{ transformOrigin: "left" }}
+            />
           ))}
-          <p className="pt-4 text-center text-xs text-muted-foreground/50">Select dates to add notes</p>
+          <motion.p
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="pt-4 text-center text-xs text-muted-foreground/50"
+          >
+            Select dates to create memories ✨
+          </motion.p>
         </motion.div>
       )}
 
-      {/* Smart prompt */}
+      {/* Smart prompt — "Add note for this range?" */}
       <AnimatePresence>
         {hasSelection && !isAdding && (
           <motion.div
-            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+            initial={{ opacity: 0, y: 15, scale: 0.93 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -10, scale: 0.95 }}
+            exit={{ opacity: 0, y: -15, scale: 0.93 }}
             transition={{ type: "spring", stiffness: 300, damping: 25 }}
-            className="rounded-xl border border-primary/20 bg-primary/5 p-4"
+            className="overflow-hidden rounded-xl border border-primary/20 bg-primary/5 p-4"
           >
             <div className="flex items-center gap-2 text-sm font-semibold text-primary">
               <motion.div
-                animate={{ rotate: [0, 15, -15, 0] }}
-                transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 2 }}
+                animate={{ rotate: [0, 20, -20, 0], scale: [1, 1.1, 1] }}
+                transition={{ duration: 2, repeat: Infinity, repeatDelay: 1.5 }}
               >
                 <Sparkles className="h-4 w-4" />
               </motion.div>
-              Add note for {formatDate(selection.start!)}
-              {rangeDays > 1 && ` → ${formatDate(selection.end!)}`}?
+              <span>
+                {rangeDays} day{rangeDays > 1 ? "s" : ""} selected — add a memory?
+              </span>
             </div>
+            <p className="mt-1 text-xs text-muted-foreground">
+              {formatDate(selection.start!)}
+              {rangeDays > 1 && ` → ${formatDate(selection.end!)}`}
+            </p>
             <div className="mt-3 flex gap-2">
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.93 }}>
                 <Button size="sm" onClick={() => setIsAdding(true)} className="gap-1.5 rounded-full text-xs font-semibold">
                   <Plus className="h-3.5 w-3.5" />
-                  Add Note
+                  Add Memory
                 </Button>
               </motion.div>
               <Button size="sm" variant="ghost" onClick={onClearSelection} className="rounded-full text-xs">
@@ -111,16 +135,16 @@ export function NotesPanel({ notes, selection, onAddNote, onDeleteNote, onClearS
       <AnimatePresence>
         {isAdding && (
           <motion.div
-            initial={{ opacity: 0, y: 15, scale: 0.95 }}
+            initial={{ opacity: 0, y: 20, scale: 0.93 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -10, scale: 0.95 }}
+            exit={{ opacity: 0, y: -10, scale: 0.93 }}
             transition={{ type: "spring", stiffness: 300, damping: 25 }}
-            className="space-y-3 rounded-xl border border-border bg-card p-4 shadow-sm"
+            className="space-y-3 rounded-xl border border-border bg-card p-4 shadow-md"
           >
             <textarea
               value={text}
               onChange={(e) => setText(e.target.value)}
-              placeholder="What's happening?"
+              placeholder="What's the memory?"
               className="w-full resize-none rounded-lg border-0 bg-secondary p-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
               rows={3}
               autoFocus
@@ -128,15 +152,15 @@ export function NotesPanel({ notes, selection, onAddNote, onDeleteNote, onClearS
 
             {/* Emoji picker */}
             <div>
-              <p className="mb-1.5 text-xs font-bold text-muted-foreground uppercase tracking-wider">Emoji</p>
+              <p className="mb-1.5 text-xs font-bold uppercase tracking-wider text-muted-foreground">Emoji</p>
               <div className="flex flex-wrap gap-1">
                 {EMOJIS.map((e) => (
                   <motion.button
                     key={e}
                     type="button"
                     onClick={() => setEmoji(e)}
-                    whileHover={{ scale: 1.2 }}
-                    whileTap={{ scale: 0.85 }}
+                    whileHover={{ scale: 1.25, rotate: 10 }}
+                    whileTap={{ scale: 0.8 }}
                     className={`rounded-lg p-1.5 text-lg transition-colors ${emoji === e ? "bg-primary/10 ring-2 ring-primary/30" : "hover:bg-secondary"}`}
                   >
                     {e}
@@ -147,20 +171,23 @@ export function NotesPanel({ notes, selection, onAddNote, onDeleteNote, onClearS
 
             {/* Color picker */}
             <div>
-              <p className="mb-1.5 text-xs font-bold text-muted-foreground uppercase tracking-wider">Color</p>
+              <p className="mb-1.5 text-xs font-bold uppercase tracking-wider text-muted-foreground">Color</p>
               <div className="flex gap-2">
                 {NOTE_COLORS.map((c) => {
                   const bgMap: Record<string, string> = {
-                    peach: "bg-note-peach", mint: "bg-note-mint", lavender: "bg-note-lavender",
-                    sky: "bg-note-sky", rose: "bg-note-rose",
+                    peach: "bg-note-peach",
+                    mint: "bg-note-mint",
+                    lavender: "bg-note-lavender",
+                    sky: "bg-note-sky",
+                    rose: "bg-note-rose",
                   };
                   return (
                     <motion.button
                       key={c.value}
                       type="button"
                       onClick={() => setColor(c.value)}
-                      whileHover={{ scale: 1.15 }}
-                      whileTap={{ scale: 0.9 }}
+                      whileHover={{ scale: 1.2 }}
+                      whileTap={{ scale: 0.85 }}
                       className={`h-7 w-7 rounded-full ${bgMap[c.value]} transition-shadow ${color === c.value ? "ring-2 ring-primary ring-offset-2 ring-offset-background" : ""}`}
                       title={c.label}
                     />
@@ -170,9 +197,9 @@ export function NotesPanel({ notes, selection, onAddNote, onDeleteNote, onClearS
             </div>
 
             <div className="flex gap-2 pt-1">
-              <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+              <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.95 }}>
                 <Button size="sm" onClick={handleSubmit} disabled={!text.trim()} className="rounded-full text-xs font-semibold">
-                  Save Note
+                  Save Memory
                 </Button>
               </motion.div>
               <Button size="sm" variant="ghost" onClick={() => setIsAdding(false)} className="rounded-full text-xs">
@@ -185,8 +212,15 @@ export function NotesPanel({ notes, selection, onAddNote, onDeleteNote, onClearS
 
       {/* Notes list */}
       <AnimatePresence mode="popLayout">
-        {sortedNotes.map((note) => (
-          <NoteCard key={note.id} note={note} onDelete={onDeleteNote} />
+        {sortedNotes.map((note, i) => (
+          <motion.div
+            key={note.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.05 }}
+          >
+            <NoteCard note={note} onDelete={onDeleteNote} />
+          </motion.div>
         ))}
       </AnimatePresence>
     </div>
