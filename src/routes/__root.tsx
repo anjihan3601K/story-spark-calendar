@@ -31,18 +31,8 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Smart Story Calendar — Capture Your Moments" },
-      { name: "description", content: "A beautiful interactive calendar to capture moments, plan ahead, and tell your story one day at a time." },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Smart Story Calendar — Capture Your Moments" },
-      { property: "og:description", content: "A beautiful interactive calendar to capture moments, plan ahead, and tell your story one day at a time." },
-      { property: "og:type", content: "website" },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/d95935fc-9470-4576-a076-30d0c4d9aaa1/id-preview-9f4c777f--a5bff41e-6b02-40de-acd3-f222c1f48e9c.lovable.app-1775647058419.png" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/d95935fc-9470-4576-a076-30d0c4d9aaa1/id-preview-9f4c777f--a5bff41e-6b02-40de-acd3-f222c1f48e9c.lovable.app-1775647058419.png" },
-      { name: "twitter:title", content: "Smart Story Calendar — Capture Your Moments" },
-      { name: "twitter:description", content: "A beautiful interactive calendar to capture moments, plan ahead, and tell your story one day at a time." },
+      { title: "Smart Story Calendar" },
+      { name: "description", content: "A beautiful interactive calendar to capture moments and tell your story." },
     ],
     links: [
       {
@@ -58,7 +48,7 @@ export const Route = createRootRoute({
 
 function RootShell({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <HeadContent />
       </head>

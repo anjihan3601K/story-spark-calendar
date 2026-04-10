@@ -19,7 +19,10 @@ function saveNotes(notes: CalendarNote[]) {
 
 export function useCalendarStore() {
   const [notes, setNotes] = useState<CalendarNote[]>([]);
-  const [currentMonth, setCurrentMonth] = useState(() => new Date());
+  const [currentMonth, setCurrentMonth] = useState(() => {
+    const now = new Date();
+    return new Date(now.getFullYear(), now.getMonth(), 1);
+  });
   const [selection, setSelection] = useState<DateRange>({ start: null, end: null });
   const [isSelecting, setIsSelecting] = useState(false);
   const [hoveredDate, setHoveredDate] = useState<Date | null>(null);

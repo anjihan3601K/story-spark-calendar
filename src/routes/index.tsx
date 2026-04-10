@@ -7,12 +7,6 @@ import { useCalendarStore } from "@/hooks/use-calendar-store";
 
 export const Route = createFileRoute("/")({
   component: Index,
-  head: () => ({
-    meta: [
-      { title: "Smart Story Calendar — Interactive Memory Keeper" },
-      { name: "description", content: "A beautiful, interactive wall calendar to capture your memories with drag-to-select date ranges and rich note cards." },
-    ],
-  }),
 });
 
 function Index() {
