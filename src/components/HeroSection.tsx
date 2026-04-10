@@ -59,27 +59,20 @@ export function HeroSection({ currentMonth }: HeroSectionProps) {
 
           {/* Animated particles/bokeh effect */}
           <div className="absolute inset-0 overflow-hidden">
-            {Array.from({ length: 6 }).map((_, i) => (
+            {[
+              { w: 14, l: 20, t: 15, dur: 3.5 },
+              { w: 22, l: 45, t: 30, dur: 4.2 },
+              { w: 10, l: 70, t: 60, dur: 3.8 },
+              { w: 18, l: 35, t: 75, dur: 4.5 },
+              { w: 12, l: 80, t: 20, dur: 3.2 },
+              { w: 24, l: 55, t: 50, dur: 4.0 },
+            ].map((p, i) => (
               <motion.div
                 key={i}
                 className="absolute rounded-full bg-white/10"
-                style={{
-                  width: 8 + Math.random() * 20,
-                  height: 8 + Math.random() * 20,
-                  left: `${15 + Math.random() * 70}%`,
-                  top: `${10 + Math.random() * 80}%`,
-                }}
-                animate={{
-                  y: [0, -30, 0],
-                  opacity: [0.1, 0.4, 0.1],
-                  scale: [1, 1.3, 1],
-                }}
-                transition={{
-                  duration: 3 + Math.random() * 2,
-                  repeat: Infinity,
-                  delay: i * 0.5,
-                  ease: "easeInOut",
-                }}
+                style={{ width: p.w, height: p.w, left: `${p.l}%`, top: `${p.t}%` }}
+                animate={{ y: [0, -30, 0], opacity: [0.1, 0.4, 0.1], scale: [1, 1.3, 1] }}
+                transition={{ duration: p.dur, repeat: Infinity, delay: i * 0.5, ease: "easeInOut" }}
               />
             ))}
           </div>
