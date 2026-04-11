@@ -36,6 +36,8 @@ function Index() {
             >
               <NotesPanel
                 notes={store.notes}
+                currentMonth={store.currentMonth}
+                direction={store.direction}
                 selection={store.selection}
                 onAddNote={store.addNote}
                 onDeleteNote={store.deleteNote}
