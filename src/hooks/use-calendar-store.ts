@@ -26,6 +26,7 @@ export function useCalendarStore() {
   const [selection, setSelection] = useState<DateRange>({ start: null, end: null });
   const [isSelecting, setIsSelecting] = useState(false);
   const [hoveredDate, setHoveredDate] = useState<Date | null>(null);
+  const [direction, setDirection] = useState<1 | -1>(1);
 
   useEffect(() => {
     setNotes(loadNotes());
@@ -48,10 +49,12 @@ export function useCalendarStore() {
   }, []);
 
   const goToPrevMonth = useCallback(() => {
+    setDirection(-1);
     setCurrentMonth((d) => new Date(d.getFullYear(), d.getMonth() - 1, 1));
   }, []);
 
   const goToNextMonth = useCallback(() => {
+    setDirection(1);
     setCurrentMonth((d) => new Date(d.getFullYear(), d.getMonth() + 1, 1));
   }, []);
 
@@ -81,6 +84,7 @@ export function useCalendarStore() {
   return {
     notes,
     currentMonth,
+    direction,
     selection,
     isSelecting,
     hoveredDate,
