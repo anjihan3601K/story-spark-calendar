@@ -8,13 +8,15 @@ import type { CalendarNote, DateRange, NoteColor } from "@/lib/calendar-types";
 
 interface NotesPanelProps {
   notes: CalendarNote[];
+  currentMonth: Date;
+  direction: 1 | -1;
   selection: DateRange;
   onAddNote: (note: Omit<CalendarNote, "id">) => void;
   onDeleteNote: (id: string) => void;
   onClearSelection: () => void;
 }
 
-export function NotesPanel({ notes, selection, onAddNote, onDeleteNote, onClearSelection }: NotesPanelProps) {
+export function NotesPanel({ notes, currentMonth, direction, selection, onAddNote, onDeleteNote, onClearSelection }: NotesPanelProps) {
   const [isAdding, setIsAdding] = useState(false);
   const [text, setText] = useState("");
   const [emoji, setEmoji] = useState("📝");
@@ -41,7 +43,21 @@ export function NotesPanel({ notes, selection, onAddNote, onDeleteNote, onClearS
     onClearSelection();
   };
 
-  const sortedNotes = [...notes].sort((a, b) => b.startDate.localeCompare(a.startDate));
+  const year = currentMonth.getFullYear();
+  const month = currentMonth.getMonth();
+  const monthKey = `${year}-${month}`;
+
+  // Filter notes that overlap with the current month
+  const monthStart = new Date(year, month, 1);
+  const monthEnd = new Date(year, month + 1, 0);
+  const monthNotes = notes.filter((note) => {
+    const nStart = new Date(note.startDate);
+    const nEnd = new Date(note.endDate);
+    return nStart <= monthEnd && nEnd >= monthStart;
+  });
+
+  const sortedNotes = [...monthNotes].sort((a, b) => b.startDate.localeCompare(a.startDate));
+  const monthLabel = currentMonth.toLocaleDateString("en-US", { month: "long" });
 
   return (
     <div className="flex flex-col gap-4">
@@ -58,12 +74,12 @@ export function NotesPanel({ notes, selection, onAddNote, onDeleteNote, onClearS
         </div>
         <motion.span
           className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-bold text-primary"
-          key={notes.length}
+          key={monthNotes.length + monthKey}
           initial={{ scale: 1.4, rotate: -10 }}
           animate={{ scale: 1, rotate: 0 }}
           transition={{ type: "spring", stiffness: 400, damping: 12 }}
         >
-          {notes.length}
+          {monthNotes.length}
         </motion.span>
       </div>
 
@@ -210,19 +226,49 @@ export function NotesPanel({ notes, selection, onAddNote, onDeleteNote, onClearS
         )}
       </AnimatePresence>
 
-      {/* Notes list */}
-      <AnimatePresence mode="popLayout">
-        {sortedNotes.map((note, i) => (
+      {/* Notes list with page-flip per month */}
+      <div style={{ perspective: "800px" }}>
+        <AnimatePresence mode="wait" custom={direction}>
           <motion.div
-            key={note.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.05 }}
+            key={monthKey}
+            custom={direction}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            variants={{
+              enter: (dir: number) => ({
+                rotateX: dir > 0 ? -60 : 60,
+                opacity: 0,
+                transformOrigin: dir > 0 ? "bottom center" : "top center",
+              }),
+              center: { rotateX: 0, opacity: 1, transformOrigin: "center center" },
+              exit: (dir: number) => ({
+                rotateX: dir > 0 ? 60 : -60,
+                opacity: 0,
+                transformOrigin: dir > 0 ? "top center" : "bottom center",
+              }),
+            }}
+            transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+            className="space-y-3"
           >
-            <NoteCard note={note} onDelete={onDeleteNote} />
+            {sortedNotes.length === 0 && !hasSelection && !isAdding && (
+              <p className="py-6 text-center text-xs text-muted-foreground/50">
+                No memories for {monthLabel} yet ✨
+              </p>
+            )}
+            {sortedNotes.map((note, i) => (
+              <motion.div
+                key={note.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.05 }}
+              >
+                <NoteCard note={note} onDelete={onDeleteNote} />
+              </motion.div>
+            ))}
           </motion.div>
-        ))}
-      </AnimatePresence>
+        </AnimatePresence>
+      </div>
     </div>
   );
 }
