@@ -1,9 +1,10 @@
-import { useRef, useCallback } from "react";
+import { useMemo, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { DayCell } from "@/components/DayCell";
 import { MonthSwitcher } from "@/components/MonthSwitcher";
 import { getDaysInMonth, isSameDay, getRangeDays, formatDate } from "@/lib/calendar-types";
 import { getDateFromTouchEvent } from "@/lib/dateHelpers";
+import { getHolidaysForMonth } from "@/lib/holidays";
 import type { CalendarNote, DateRange } from "@/lib/calendar-types";
 
 const WEEKDAYS = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
@@ -50,6 +51,7 @@ export function CalendarGrid({
   const daysInMonth = getDaysInMonth(year, month);
   const firstDay = getMondayFirstDay(year, month);
   const today = new Date();
+  const holidays = useMemo(() => getHolidaysForMonth(year, month), [year, month]);
 
   const prevMonthDays = getDaysInMonth(year, month - 1);
   const cells: { date: Date; isCurrentMonth: boolean }[] = [];
@@ -179,6 +181,7 @@ export function CalendarGrid({
                   hoveredDate={hoveredDate}
                   notes={notes}
                   isWeekend={isWeekend}
+                  holiday={isCurrentMonth ? holidays.get(date.getDate()) : undefined}
                   onMouseDown={onStartSelection}
                   onMouseEnter={(d) => {
                     onHover(d);

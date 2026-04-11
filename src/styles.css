@@ -55,6 +55,8 @@
   --color-note-sky: var(--note-sky);
   --color-note-rose: var(--note-rose);
   --color-surface-warm: var(--surface-warm);
+  --color-holiday: var(--holiday);
+  --color-holiday-foreground: var(--holiday-foreground);
 
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
 
@@ -134,6 +136,8 @@
   --note-rose: oklch(0.92 0.06 350);
 
   --surface-warm: oklch(0.97 0.01 55);
+  --holiday: oklch(0.92 0.08 140);
+  --holiday-foreground: oklch(0.35 0.12 140);
 }
 
 .dark {
@@ -183,6 +187,8 @@
   --note-rose: oklch(0.35 0.06 350);
 
   --surface-warm: oklch(0.2 0.01 55);
+  --holiday: oklch(0.3 0.06 140);
+  --holiday-foreground: oklch(0.8 0.1 140);
 }
 
 @layer base {

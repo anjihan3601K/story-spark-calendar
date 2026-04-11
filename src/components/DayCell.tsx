@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { isSameDay, isInRange, toISODateString } from "@/lib/calendar-types";
 import type { CalendarNote, DateRange } from "@/lib/calendar-types";
+import type { HolidayInfo } from "@/lib/holidays";
 
 interface DayCellProps {
   date: Date;
@@ -11,6 +12,7 @@ interface DayCellProps {
   hoveredDate: Date | null;
   notes: CalendarNote[];
   isWeekend: boolean;
+  holiday?: HolidayInfo;
   onMouseDown: (date: Date) => void;
   onMouseEnter: (date: Date) => void;
   onMouseUp: () => void;
@@ -25,6 +27,7 @@ export function DayCell({
   hoveredDate,
   notes,
   isWeekend,
+  holiday,
   onMouseDown,
   onMouseEnter,
   onMouseUp,
@@ -41,14 +44,13 @@ export function DayCell({
     return date >= s && date <= e;
   });
 
-  // Determine range position for rounded corners
   const isRangeStart = isStart && !isEnd;
   const isRangeEnd = isEnd && !isStart;
   const isSingleDay = isStart && isEnd;
 
   const getClassName = () => {
     let base =
-      "relative flex h-11 w-full items-center justify-center text-sm font-medium select-none cursor-pointer transition-all duration-150 md:h-12";
+      "relative flex h-11 w-full items-center justify-center text-sm font-medium select-none cursor-pointer transition-all duration-150 md:h-12 group";
 
     if (!isCurrentMonth) {
       base += " text-muted-foreground/25 pointer-events-none";
@@ -100,6 +102,36 @@ export function DayCell({
     >
       <span className="relative z-10">{date.getDate()}</span>
 
+      {/* Holiday emoji indicator */}
+      {holiday && isCurrentMonth && (
+        <motion.span
+          className="absolute -top-0.5 -right-0.5 z-20 text-[10px] leading-none md:text-xs"
+          initial={{ scale: 0, rotate: -30 }}
+          animate={{ scale: 1, rotate: 0 }}
+          transition={{ type: "spring", stiffness: 400, damping: 15 }}
+          title={holiday.name}
+        >
+          {holiday.emoji}
+        </motion.span>
+      )}
+
+      {/* Holiday underline */}
+      {holiday && isCurrentMonth && !isEndpoint && (
+        <motion.span
+          className="absolute bottom-1 left-1/2 z-10 h-0.5 w-4 -translate-x-1/2 rounded-full bg-holiday"
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: 1 }}
+          transition={{ delay: 0.1, duration: 0.3 }}
+        />
+      )}
+
+      {/* Holiday tooltip on hover */}
+      {holiday && isCurrentMonth && (
+        <span className="pointer-events-none absolute -top-8 left-1/2 z-30 hidden -translate-x-1/2 whitespace-nowrap rounded-lg bg-holiday px-2 py-1 text-[10px] font-semibold text-holiday-foreground shadow-lg group-hover:block">
+          {holiday.name}
+        </span>
+      )}
+
       {/* Today ring indicator */}
       {isToday && !isEndpoint && (
         <motion.span
@@ -122,7 +154,7 @@ export function DayCell({
       )}
 
       {/* Note indicator dot */}
-      {hasNotes && (
+      {hasNotes && !holiday && (
         <motion.span
           className={`absolute bottom-0.5 left-1/2 h-1.5 w-1.5 -translate-x-1/2 rounded-full ${isEndpoint ? "bg-primary-foreground" : "bg-primary"}`}
           initial={{ scale: 0 }}
