@@ -55,6 +55,8 @@
   --color-note-sky: var(--note-sky);
   --color-note-rose: var(--note-rose);
   --color-surface-warm: var(--surface-warm);
+  --color-holiday: var(--holiday);
+  --color-holiday-foreground: var(--holiday-foreground);
 
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
 
