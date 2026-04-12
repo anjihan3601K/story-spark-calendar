@@ -94,6 +94,9 @@ function Index() {
           </div>
         </motion.div>
 
+        {/* Holiday legend */}
+        <HolidayLegend currentMonth={store.currentMonth} />
+
         {/* Footer hint */}
         <motion.p
           className="mt-6 text-center text-xs text-muted-foreground/40"
