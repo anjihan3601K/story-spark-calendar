@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { HeroSection } from "@/components/HeroSection";
 import { CalendarGrid } from "@/components/CalendarGrid";
 import { NotesPanel } from "@/components/NotesPanel";
+import { HolidayLegend } from "@/components/HolidayLegend";
 import { useCalendarStore } from "@/hooks/use-calendar-store";
 
 export const Route = createFileRoute("/")({
@@ -92,6 +93,9 @@ function Index() {
             </AnimatePresence>
           </div>
         </motion.div>
+
+        {/* Holiday legend */}
+        <HolidayLegend currentMonth={store.currentMonth} />
 
         {/* Footer hint */}
         <motion.p
