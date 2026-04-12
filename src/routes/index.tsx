@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { HeroSection } from "@/components/HeroSection";
 import { CalendarGrid } from "@/components/CalendarGrid";
 import { NotesPanel } from "@/components/NotesPanel";
@@ -11,6 +11,9 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   const store = useCalendarStore();
+  const year = store.currentMonth.getFullYear();
+  const month = store.currentMonth.getMonth();
+  const monthKey = `${year}-${month}`;
 
   return (
     <div className="min-h-screen bg-background">
@@ -25,48 +28,68 @@ function Index() {
           {/* Hero Image */}
           <HeroSection currentMonth={store.currentMonth} />
 
-          {/* Bottom section: Notes + Calendar */}
-          <div className="grid gap-0 lg:grid-cols-[280px_1fr]">
-            {/* Notes sidebar */}
-            <motion.div
-              className="border-b border-border bg-surface-warm/50 p-4 md:p-5 lg:border-b-0 lg:border-r"
-              initial={{ opacity: 0, x: -30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.3, duration: 0.5 }}
-            >
-              <NotesPanel
-                notes={store.notes}
-                currentMonth={store.currentMonth}
-                direction={store.direction}
-                selection={store.selection}
-                onAddNote={store.addNote}
-                onDeleteNote={store.deleteNote}
-                onClearSelection={store.clearSelection}
-              />
-            </motion.div>
+          {/* Bottom section: Notes + Calendar — flips as one unit */}
+          <div style={{ perspective: "1200px" }}>
+            <AnimatePresence mode="wait" custom={store.direction}>
+              <motion.div
+                key={monthKey}
+                custom={store.direction}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                variants={{
+                  enter: (dir: number) => ({
+                    rotateX: dir > 0 ? -90 : 90,
+                    opacity: 0,
+                    transformOrigin: dir > 0 ? "bottom center" : "top center",
+                  }),
+                  center: {
+                    rotateX: 0,
+                    opacity: 1,
+                    transformOrigin: "center center",
+                  },
+                  exit: (dir: number) => ({
+                    rotateX: dir > 0 ? 90 : -90,
+                    opacity: 0,
+                    transformOrigin: dir > 0 ? "top center" : "bottom center",
+                  }),
+                }}
+                transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                className="grid gap-0 lg:grid-cols-[280px_1fr]"
+              >
+                {/* Notes sidebar */}
+                <div className="border-b border-border bg-surface-warm/50 p-4 md:p-5 lg:border-b-0 lg:border-r">
+                  <NotesPanel
+                    notes={store.notes}
+                    currentMonth={store.currentMonth}
+                    direction={store.direction}
+                    selection={store.selection}
+                    onAddNote={store.addNote}
+                    onDeleteNote={store.deleteNote}
+                    onClearSelection={store.clearSelection}
+                  />
+                </div>
 
-            {/* Calendar grid */}
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.4, duration: 0.5 }}
-            >
-              <CalendarGrid
-                currentMonth={store.currentMonth}
-                direction={store.direction}
-                selection={store.selection}
-                isSelecting={store.isSelecting}
-                hoveredDate={store.hoveredDate}
-                notes={store.notes}
-                onPrevMonth={store.goToPrevMonth}
-                onNextMonth={store.goToNextMonth}
-                onToday={store.goToToday}
-                onStartSelection={store.startSelection}
-                onExtendSelection={store.extendSelection}
-                onEndSelection={store.endSelection}
-                onHover={store.setHoveredDate}
-              />
-            </motion.div>
+                {/* Calendar grid */}
+                <div>
+                  <CalendarGrid
+                    currentMonth={store.currentMonth}
+                    direction={store.direction}
+                    selection={store.selection}
+                    isSelecting={store.isSelecting}
+                    hoveredDate={store.hoveredDate}
+                    notes={store.notes}
+                    onPrevMonth={store.goToPrevMonth}
+                    onNextMonth={store.goToNextMonth}
+                    onToday={store.goToToday}
+                    onStartSelection={store.startSelection}
+                    onExtendSelection={store.extendSelection}
+                    onEndSelection={store.endSelection}
+                    onHover={store.setHoveredDate}
+                  />
+                </div>
+              </motion.div>
+            </AnimatePresence>
           </div>
         </motion.div>
 
