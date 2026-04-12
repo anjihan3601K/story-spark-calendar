@@ -69,7 +69,7 @@ export function CalendarGrid({
 
   const effectiveEnd = isSelecting && hoveredDate ? hoveredDate : selection.end;
   const rangeDays = getRangeDays(selection.start, effectiveEnd);
-  const monthKey = `${year}-${month}`;
+  
 
   // Touch drag handler
   const handleTouchMove = useCallback(
