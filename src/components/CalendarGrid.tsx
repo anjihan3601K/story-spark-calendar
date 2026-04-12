@@ -131,69 +131,36 @@ export function CalendarGrid({
       </div>
 
       {/* Day cells grid */}
-      <div style={{ perspective: "1200px" }}>
-        <AnimatePresence mode="wait" custom={direction}>
-          <motion.div
-            key={monthKey}
-            ref={gridRef}
-            className="mt-1 grid grid-cols-7 gap-0"
-            custom={direction}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            variants={{
-              enter: (dir: number) => ({
-                rotateX: dir > 0 ? -90 : 90,
-                opacity: 0,
-                transformOrigin: dir > 0 ? "bottom center" : "top center",
-              }),
-              center: {
-                rotateX: 0,
-                opacity: 1,
-                transformOrigin: "center center",
-              },
-              exit: (dir: number) => ({
-                rotateX: dir > 0 ? 90 : -90,
-                opacity: 0,
-                transformOrigin: dir > 0 ? "top center" : "bottom center",
-              }),
-            }}
-            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={onEndSelection}
-          >
-          {cells.map(({ date, isCurrentMonth }, idx) => {
-            const dayOfWeek = date.getDay();
-            const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
-            return (
-              <motion.div
-                key={date.toISOString()}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.006, duration: 0.25 }}
-              >
-                <DayCell
-                  date={date}
-                  isCurrentMonth={isCurrentMonth}
-                  isToday={isSameDay(date, today)}
-                  selection={selection}
-                  isSelecting={isSelecting}
-                  hoveredDate={hoveredDate}
-                  notes={notes}
-                  isWeekend={isWeekend}
-                  holiday={isCurrentMonth ? holidays.get(date.getDate()) : undefined}
-                  onMouseDown={onStartSelection}
-                  onMouseEnter={(d) => {
-                    onHover(d);
-                    onExtendSelection(d);
-                  }}
-                  onMouseUp={onEndSelection}
-                />
-              </motion.div>
-            );
-          })}
-        </motion.div>
-        </AnimatePresence>
+      <div
+        ref={gridRef}
+        className="mt-1 grid grid-cols-7 gap-0"
+        onTouchMove={handleTouchMove}
+        onTouchEnd={onEndSelection}
+      >
+        {cells.map(({ date, isCurrentMonth }, idx) => {
+          const dayOfWeek = date.getDay();
+          const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+          return (
+            <DayCell
+              key={date.toISOString()}
+              date={date}
+              isCurrentMonth={isCurrentMonth}
+              isToday={isSameDay(date, today)}
+              selection={selection}
+              isSelecting={isSelecting}
+              hoveredDate={hoveredDate}
+              notes={notes}
+              isWeekend={isWeekend}
+              holiday={isCurrentMonth ? holidays.get(date.getDate()) : undefined}
+              onMouseDown={onStartSelection}
+              onMouseEnter={(d) => {
+                onHover(d);
+                onExtendSelection(d);
+              }}
+              onMouseUp={onEndSelection}
+            />
+          );
+        })}
       </div>
     </div>
   );

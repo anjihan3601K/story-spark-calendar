@@ -226,48 +226,23 @@ export function NotesPanel({ notes, currentMonth, direction, selection, onAddNot
         )}
       </AnimatePresence>
 
-      {/* Notes list with page-flip per month */}
-      <div style={{ perspective: "800px" }}>
-        <AnimatePresence mode="wait" custom={direction}>
+      {/* Notes list */}
+      <div className="space-y-3">
+        {sortedNotes.length === 0 && !hasSelection && !isAdding && (
+          <p className="py-6 text-center text-xs text-muted-foreground/50">
+            No memories for {monthLabel} yet ✨
+          </p>
+        )}
+        {sortedNotes.map((note, i) => (
           <motion.div
-            key={monthKey}
-            custom={direction}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            variants={{
-              enter: (dir: number) => ({
-                rotateX: dir > 0 ? -60 : 60,
-                opacity: 0,
-                transformOrigin: dir > 0 ? "bottom center" : "top center",
-              }),
-              center: { rotateX: 0, opacity: 1, transformOrigin: "center center" },
-              exit: (dir: number) => ({
-                rotateX: dir > 0 ? 60 : -60,
-                opacity: 0,
-                transformOrigin: dir > 0 ? "top center" : "bottom center",
-              }),
-            }}
-            transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-            className="space-y-3"
+            key={note.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.05 }}
           >
-            {sortedNotes.length === 0 && !hasSelection && !isAdding && (
-              <p className="py-6 text-center text-xs text-muted-foreground/50">
-                No memories for {monthLabel} yet ✨
-              </p>
-            )}
-            {sortedNotes.map((note, i) => (
-              <motion.div
-                key={note.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.05 }}
-              >
-                <NoteCard note={note} onDelete={onDeleteNote} />
-              </motion.div>
-            ))}
+            <NoteCard note={note} onDelete={onDeleteNote} />
           </motion.div>
-        </AnimatePresence>
+        ))}
       </div>
     </div>
   );
